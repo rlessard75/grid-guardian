@@ -176,7 +176,7 @@ export default function UploadModal({ onClose, onComplete }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && !running && onClose()}>
       <div className="modal">
         <div className="modal-header">
           <h2>Submit PR for Review</h2>
