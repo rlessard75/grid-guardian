@@ -21,6 +21,7 @@ export default function UploadModal({ onClose, onComplete }) {
   const [phaseMessages, setPhaseMessages] = useState({})
   const [currentPrId, setCurrentPrId] = useState(null)
   const fileInputRef = useRef(null)
+  const timerRef    = useRef(null)
 
   const isDiffMode = fileType === 'diff' || (!file && pastedDiff)
 
@@ -113,46 +114,61 @@ export default function UploadModal({ onClose, onComplete }) {
     const { pr_id } = await res.json()
     setCurrentPrId(pr_id)
 
-    // Open SSE stream for progress
-    const es = new EventSource(`/api/reviews/${pr_id}/stream`)
-    es.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      const phase = data.phase
+    // Poll GET /api/reviews/{pr_id} — more reliable than SSE on proxied deployments
+    let lastIdx = 0
+    timerRef.current = setInterval(async () => {
+      try {
+        const r = await fetch(`/api/reviews/${pr_id}`)
+        const data = await r.json()
 
-      if (phase === 'complete') {
-        es.close()
-        setPhaseStatus(prev => {
-          const next = { ...prev }
-          for (const p of PHASES) if (!next[p.id]) next[p.id] = 'done'
-          return next
-        })
-        setTimeout(() => onComplete(pr_id), 600)
-        return
-      }
-
-      if (phase === 'error') {
-        es.close()
-        setPhaseStatus(prev => ({ ...prev, [phase]: 'error' }))
-        setRunning(false)
-        return
-      }
-
-      // Mark previous phases done, current active
-      setPhaseStatus(prev => {
-        const next = { ...prev }
-        let found = false
-        for (const p of PHASES) {
-          if (p.id === phase) { next[p.id] = 'active'; found = true }
-          else if (!found)     next[p.id] = 'done'
+        // Process any new progress events
+        const events = data.progress ?? []
+        for (let i = lastIdx; i < events.length; i++) {
+          const ev = events[i]
+          if (ev.phase === 'complete') {
+            clearInterval(timerRef.current)
+            setPhaseStatus(prev => {
+              const next = { ...prev }
+              for (const p of PHASES) if (!next[p.id]) next[p.id] = 'done'
+              return next
+            })
+            setTimeout(() => onComplete(pr_id), 600)
+            return
+          }
+          if (ev.phase === 'error') {
+            clearInterval(timerRef.current)
+            setRunning(false)
+            return
+          }
+          setPhaseStatus(prev => {
+            const next = { ...prev }
+            let found = false
+            for (const p of PHASES) {
+              if (p.id === ev.phase) { next[p.id] = 'active'; found = true }
+              else if (!found)        next[p.id] = 'done'
+            }
+            return next
+          })
+          if (ev.message) {
+            setPhaseMessages(prev => ({ ...prev, [ev.phase]: ev.message }))
+          }
         }
-        return next
-      })
+        lastIdx = events.length
 
-      if (data.message) {
-        setPhaseMessages(prev => ({ ...prev, [phase]: data.message }))
+        // Review file written — pipeline finished
+        if (data.status && data.status !== 'running') {
+          clearInterval(timerRef.current)
+          setPhaseStatus(prev => {
+            const next = { ...prev }
+            for (const p of PHASES) if (!next[p.id]) next[p.id] = 'done'
+            return next
+          })
+          setTimeout(() => onComplete(pr_id), 600)
+        }
+      } catch (_) {
+        // Network hiccup — keep polling
       }
-    }
-    es.onerror = () => { es.close(); setRunning(false) }
+    }, 1500)
   }
 
   function phaseState(id) {
