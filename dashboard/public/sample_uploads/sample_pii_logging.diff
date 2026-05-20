@@ -1,0 +1,11 @@
+diff --git a/payments-api/src/handlers/charge.py b/payments-api/src/handlers/charge.py
+index a3f2c1d..b8e4f92 100644
+--- a/payments-api/src/handlers/charge.py
++++ b/payments-api/src/handlers/charge.py
+@@ -18,6 +18,7 @@ async def handle_charge(request: ChargeRequest, user: User) -> ChargeResponse:
+     """Process a payment charge for the authenticated user."""
+     log.info(f"Processing charge for amount={request.amount} currency={request.currency}")
++    log.info(f"User payload: {user.dict()}")
+
+     result = await payment_processor.charge(
+         user_id=user.id,

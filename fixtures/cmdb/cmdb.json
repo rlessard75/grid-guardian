@@ -1,0 +1,88 @@
+{
+  "services": [
+    {
+      "service_id": "SVC-0142",
+      "name": "payments-api",
+      "tier": "Tier-1",
+      "owner_team": "Payments Platform",
+      "owner_email": "payments-oncall@example.com",
+      "environment": "prod",
+      "language": "python",
+      "upstream_dependencies": ["auth-service", "ledger-db"],
+      "downstream_consumers": ["checkout-web", "mobile-app", "partner-api"],
+      "data_classification": "PCI",
+      "change_freeze": false,
+      "last_major_change": "2026-03-04"
+    },
+    {
+      "service_id": "SVC-0207",
+      "name": "auth-service",
+      "tier": "Tier-1",
+      "owner_team": "Identity",
+      "owner_email": "identity-oncall@example.com",
+      "environment": "prod",
+      "language": "go",
+      "upstream_dependencies": ["user-directory"],
+      "downstream_consumers": ["payments-api", "checkout-web", "admin-portal", "partner-api"],
+      "data_classification": "PII",
+      "change_freeze": false,
+      "last_major_change": "2026-04-22"
+    },
+    {
+      "service_id": "SVC-0318",
+      "name": "ledger-db",
+      "tier": "Tier-1",
+      "owner_team": "Data Platform",
+      "owner_email": "data-oncall@example.com",
+      "environment": "prod",
+      "language": "n/a (managed Postgres)",
+      "upstream_dependencies": [],
+      "downstream_consumers": ["payments-api", "reporting-batch"],
+      "data_classification": "PCI",
+      "change_freeze": true,
+      "last_major_change": "2025-11-15"
+    },
+    {
+      "service_id": "SVC-0455",
+      "name": "checkout-web",
+      "tier": "Tier-2",
+      "owner_team": "Storefront",
+      "owner_email": "storefront@example.com",
+      "environment": "prod",
+      "language": "typescript",
+      "upstream_dependencies": ["payments-api", "auth-service", "catalog-api"],
+      "downstream_consumers": [],
+      "data_classification": "PII",
+      "change_freeze": false,
+      "last_major_change": "2026-05-10"
+    },
+    {
+      "service_id": "SVC-0612",
+      "name": "marketing-site",
+      "tier": "Tier-3",
+      "owner_team": "Growth",
+      "owner_email": "growth@example.com",
+      "environment": "prod",
+      "language": "typescript",
+      "upstream_dependencies": [],
+      "downstream_consumers": [],
+      "data_classification": "Public",
+      "change_freeze": false,
+      "last_major_change": "2026-05-12"
+    },
+    {
+      "service_id": "SVC-0701",
+      "name": "reporting-batch",
+      "tier": "Tier-2",
+      "owner_team": "Analytics",
+      "owner_email": "analytics@example.com",
+      "environment": "prod",
+      "language": "python",
+      "upstream_dependencies": ["ledger-db"],
+      "downstream_consumers": [],
+      "data_classification": "Internal",
+      "change_freeze": false,
+      "last_major_change": "2026-04-30"
+    }
+  ]
+}

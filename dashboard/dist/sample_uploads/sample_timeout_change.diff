@@ -1,0 +1,10 @@
+diff --git a/payments-api/config/db.yaml b/payments-api/config/db.yaml
+index 7c3a9b1..4d2f8e5 100644
+--- a/payments-api/config/db.yaml
++++ b/payments-api/config/db.yaml
+@@ -7,7 +7,7 @@ database:
+   pool:
+     max_connections: 200
+     min_connections: 10
+-    timeout_seconds: 5
++    timeout_seconds: 30

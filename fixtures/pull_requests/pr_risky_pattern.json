@@ -1,0 +1,23 @@
+{
+  "pr_id": "PR-1043",
+  "title": "Tighten auth token lifetime and right-size payments DB pool",
+  "description": "Security hardening sprint: shorter JWTs reduce blast radius of token theft. Also right-sizing payments DB pool — current 200 is overkill based on yesterday's traffic.",
+  "author": "p.shah",
+  "branch": "feature/security-hardening",
+  "base_branch": "main",
+  "created_at": "2026-05-19T11:30:00Z",
+  "files_changed": [
+    {
+      "path": "auth-service/config/tokens.yaml",
+      "language": "yaml",
+      "change_type": "modified",
+      "diff": "--- a/auth-service/config/tokens.yaml\n+++ b/auth-service/config/tokens.yaml\n@@ -3,7 +3,7 @@ jwt:\n   issuer: \"auth.example.com\"\n   algorithm: \"RS256\"\n-  access_token_ttl_minutes: 60\n+  access_token_ttl_minutes: 5\n   refresh_token_ttl_days: 30\n   clock_skew_seconds: 30\n"
+    },
+    {
+      "path": "payments-api/config/db.yaml",
+      "language": "yaml",
+      "change_type": "modified",
+      "diff": "--- a/payments-api/config/db.yaml\n+++ b/payments-api/config/db.yaml\n@@ -5,8 +5,8 @@ database:\n   host: \"ledger-db.internal\"\n   port: 5432\n   pool:\n-    max_connections: 200\n+    max_connections: 50\n     min_connections: 10\n     timeout_seconds: 5\n"
+    }
+  ]
+}

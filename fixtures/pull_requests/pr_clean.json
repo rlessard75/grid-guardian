@@ -1,0 +1,17 @@
+{
+  "pr_id": "PR-1041",
+  "title": "Update homepage hero copy for Q2 campaign",
+  "description": "Swaps the hero headline and subhead for the new Q2 'Built for Builders' campaign. Copy approved by Growth + Legal. No logic changes.",
+  "author": "j.lin",
+  "branch": "feature/q2-hero-copy",
+  "base_branch": "main",
+  "created_at": "2026-05-19T09:14:00Z",
+  "files_changed": [
+    {
+      "path": "marketing-site/src/pages/home/Hero.tsx",
+      "language": "typescript",
+      "change_type": "modified",
+      "diff": "--- a/marketing-site/src/pages/home/Hero.tsx\n+++ b/marketing-site/src/pages/home/Hero.tsx\n@@ -12,8 +12,8 @@ export function Hero() {\n   return (\n     <section className=\"hero\">\n-      <h1>Software that scales with you</h1>\n-      <p>The platform trusted by 10,000+ teams.</p>\n+      <h1>Built for Builders</h1>\n+      <p>Ship faster. Sleep better. The platform trusted by 10,000+ teams.</p>\n       <CTAButton href=\"/signup\">Get started</CTAButton>\n     </section>\n   );\n }\n"
+    }
+  ]
+}

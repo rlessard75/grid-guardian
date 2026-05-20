@@ -1,0 +1,84 @@
+{
+  "incidents": [
+    {
+      "incident_id": "INC-44218",
+      "opened": "2026-02-11T14:22:00Z",
+      "resolved": "2026-02-11T17:08:00Z",
+      "severity": "Sev-1",
+      "affected_services": ["payments-api", "ledger-db"],
+      "title": "Payment authorization timeouts after connection pool change",
+      "root_cause": "DB connection pool max_connections reduced from 200 to 50 in a config change; payments-api exhausted pool under normal load.",
+      "tags": ["database", "connection-pool", "config-change", "payments"]
+    },
+    {
+      "incident_id": "INC-44502",
+      "opened": "2026-02-28T09:05:00Z",
+      "resolved": "2026-02-28T09:47:00Z",
+      "severity": "Sev-3",
+      "affected_services": ["marketing-site"],
+      "title": "Marketing site 500s after CDN config typo",
+      "root_cause": "Misconfigured cache-control header caused origin overload.",
+      "tags": ["cdn", "config", "marketing"]
+    },
+    {
+      "incident_id": "INC-44877",
+      "opened": "2026-03-19T22:41:00Z",
+      "resolved": "2026-03-20T02:15:00Z",
+      "severity": "Sev-1",
+      "affected_services": ["auth-service", "payments-api", "checkout-web"],
+      "title": "Auth token TTL reduced; cascading re-auth storm",
+      "root_cause": "JWT TTL reduced from 60min to 5min in auth-service without consumer notification. Downstream services hit token endpoint at 40x normal rate.",
+      "tags": ["auth", "jwt", "ttl", "cascading-failure", "breaking-change"]
+    },
+    {
+      "incident_id": "INC-45011",
+      "opened": "2026-03-30T11:12:00Z",
+      "resolved": "2026-03-30T12:00:00Z",
+      "severity": "Sev-2",
+      "affected_services": ["reporting-batch"],
+      "title": "Batch job OOM after query change",
+      "root_cause": "Reporting query stopped using indexed column; full scan caused OOM.",
+      "tags": ["database", "query-plan", "reporting"]
+    },
+    {
+      "incident_id": "INC-45203",
+      "opened": "2026-04-08T03:55:00Z",
+      "resolved": "2026-04-08T05:30:00Z",
+      "severity": "Sev-2",
+      "affected_services": ["payments-api"],
+      "title": "PII written to debug logs",
+      "root_cause": "A debug log statement added in PR #8821 logged the full request body, including cardholder email and last-4. Detected by log scanner 6 hours after deploy.",
+      "tags": ["pii", "logging", "compliance", "payments"]
+    },
+    {
+      "incident_id": "INC-45390",
+      "opened": "2026-04-21T16:30:00Z",
+      "resolved": "2026-04-21T16:55:00Z",
+      "severity": "Sev-4",
+      "affected_services": ["marketing-site"],
+      "title": "Broken link on homepage",
+      "root_cause": "Stale URL after content migration.",
+      "tags": ["content", "marketing"]
+    },
+    {
+      "incident_id": "INC-45612",
+      "opened": "2026-05-02T08:18:00Z",
+      "resolved": "2026-05-02T10:44:00Z",
+      "severity": "Sev-1",
+      "affected_services": ["payments-api", "auth-service"],
+      "title": "Hardcoded API key rotated by vendor mid-day",
+      "root_cause": "Payments-api had a hardcoded vendor API key in source. Vendor rotated the key on their side; payments-api began returning 502s. Key should have been in secrets manager.",
+      "tags": ["secrets", "hardcoded-credentials", "payments", "vendor"]
+    },
+    {
+      "incident_id": "INC-45788",
+      "opened": "2026-05-14T13:02:00Z",
+      "resolved": "2026-05-14T13:35:00Z",
+      "severity": "Sev-3",
+      "affected_services": ["checkout-web"],
+      "title": "Checkout button regression",
+      "root_cause": "CSS change hid the submit button on Safari iOS.",
+      "tags": ["frontend", "css", "checkout", "mobile"]
+    }
+  ]
+}
